@@ -25,7 +25,7 @@ func (r *repository) Create(transaction Transaction) (Transaction, error) {
 
 func (r *repository) GetTransactionsByUserID(userID int) ([]Transaction, error) {
 	transactions := []Transaction{}
-	err := r.db.Where("user_id = ?", userID).Find(transactions).Error
+	err := r.db.Where("user_id = ?", userID).Find(&transactions).Error
 	if err != nil {
 		return transactions, err
 	}

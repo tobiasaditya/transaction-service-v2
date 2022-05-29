@@ -33,7 +33,9 @@ func main() {
 
 	api := router.Group("/api/v2")
 	api.POST("/user/register", userHandler.RegisterUser)
+
 	api.POST("/transaction/add", transactionHandler.CreateTransaction)
+	api.GET("/transaction", transactionHandler.GetTransactionsUser)
 
 	router.Run()
 }

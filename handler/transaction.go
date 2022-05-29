@@ -42,3 +42,18 @@ func (h transactionHandler) CreateTransaction(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 
 }
+
+func (h transactionHandler) GetTransactionsUser(c *gin.Context) {
+	userID := 1
+	transactions, err := h.transactionService.GetTransactions(userID)
+	if err != nil {
+		errorMessage := gin.H{"errors": err}
+
+		response := helper.APIResponse("Failed to get transactions", http.StatusBadRequest, errorMessage)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	format := transaction.FormatTransactions(transactions)
+	response := helper.APIResponse("Success adding transaction", http.StatusOK, format)
+	c.JSON(http.StatusOK, response)
+}

@@ -2,6 +2,7 @@ package transaction
 
 type Service interface {
 	CreateTransaction(input InputTransaction) (Transaction, error)
+	GetTransactions(userID int) ([]Transaction, error)
 }
 
 type service struct {
@@ -27,4 +28,14 @@ func (s service) CreateTransaction(input InputTransaction) (Transaction, error) 
 		return transaction, err
 	}
 	return transaction, nil
+}
+
+func (s service) GetTransactions(userID int) ([]Transaction, error) {
+	transactions := []Transaction{}
+
+	transactions, err := s.repository.GetTransactionsByUserID(userID)
+	if err != nil {
+		return transactions, err
+	}
+	return transactions, nil
 }
