@@ -7,6 +7,8 @@ type User struct {
 	FullName    string
 	Email       string
 	PhoneNumber string
-	CreatedAt   time.Time
+	Token       string
 	Password    string
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }

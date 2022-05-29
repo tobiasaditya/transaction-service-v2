@@ -15,6 +15,7 @@ type Response struct {
 
 func APIResponse(message string, code int, content interface{}) Response {
 	jsonResponse := Response{}
+	jsonResponse.RequestTime = time.Now()
 	jsonResponse.Message = message
 	jsonResponse.StatusCode = code
 	jsonResponse.Content = content

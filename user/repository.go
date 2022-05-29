@@ -17,7 +17,7 @@ func NewRepository(db *gorm.DB) *repository {
 }
 
 func (r *repository) Create(user User) (User, error) {
-	err := r.db.Create(user).Error
+	err := r.db.Create(&user).Error
 	if err != nil {
 		return user, err
 	}
