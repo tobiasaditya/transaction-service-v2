@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"transaction-service-v2/handler"
+	"transaction-service-v2/transaction"
 	"transaction-service-v2/user"
 
 	"github.com/gin-gonic/gin"
@@ -24,10 +25,15 @@ func main() {
 	userService := user.NewService(userRepo)
 	userHandler := handler.NewUserHandler(userService)
 
+	transactionRepo := transaction.NewRepository(db)
+	transactionService := transaction.NewService(transactionRepo)
+	transactionHandler := handler.NewTransactionHandler(transactionService)
+
 	router := gin.Default()
 
 	api := router.Group("/api/v2")
 	api.POST("/user/register", userHandler.RegisterUser)
+	api.POST("/transaction/add", transactionHandler.CreateTransaction)
 
 	router.Run()
 }
