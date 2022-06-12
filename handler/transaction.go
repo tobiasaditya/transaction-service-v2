@@ -31,7 +31,9 @@ func (h transactionHandler) CreateTransaction(c *gin.Context) {
 		return
 	}
 
-	newTrx, err := h.transactionService.CreateTransaction(input)
+	currentUser := c.MustGet("currentUser").(user.User)
+
+	newTrx, err := h.transactionService.CreateTransaction(input, currentUser.ID.Hex())
 	if err != nil {
 		errorMessage := gin.H{"errors": err.Error()}
 

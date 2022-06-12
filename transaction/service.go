@@ -1,9 +1,14 @@
 package transaction
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type Service interface {
-	CreateTransaction(input InputTransaction) (Transaction, error)
+	CreateTransaction(input InputTransaction, userID string) (Transaction, error)
 	GetTransactions(userID string, start time.Time, end time.Time) ([]Transaction, error)
 }
 
@@ -15,14 +20,16 @@ func NewService(repository Repository) *service {
 	return &service{repository: repository}
 }
 
-func (s service) CreateTransaction(input InputTransaction) (Transaction, error) {
+func (s service) CreateTransaction(input InputTransaction, userID string) (Transaction, error) {
 	transaction := Transaction{
-		TrxType:   input.TrxType,
-		Amount:    input.Amount,
-		Desc:      input.Desc,
-		TrxMethod: input.Method,
-		UserID:    "6189f1796bb08e7dc15fe3ef",
-		TrxID:     "TRX-INV-20201921",
+		ID:          primitive.NewObjectID(),
+		TrxType:     input.TrxType,
+		Amount:      input.Amount,
+		Desc:        input.Desc,
+		TrxMethod:   input.Method,
+		UserID:      userID,
+		TrxID:       uuid.New().String(),
+		RequestTime: time.Now(),
 	}
 
 	transaction, err := s.repository.Create(transaction)
