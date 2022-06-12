@@ -1,9 +1,11 @@
 package user
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
 type FormatterUser struct {
-	ID       int    `json:"id"`
-	FullName string `json:"full_name"`
-	Email    string `json:"email"`
+	ID       primitive.ObjectID `json:"id"`
+	FullName string             `json:"full_name"`
+	Email    string             `json:"email"`
 }
 
 func FormatUser(user User) FormatterUser {

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"transaction-service-v2/helper"
 	"transaction-service-v2/user"
@@ -39,6 +40,33 @@ func (h userHandler) RegisterUser(c *gin.Context) {
 	}
 	format := user.FormatUser(newUser)
 	response := helper.APIResponse("Account has been registered", http.StatusOK, format)
+	c.JSON(http.StatusOK, response)
+
+}
+
+func (h userHandler) LoginUser(c *gin.Context) {
+	var input user.InputLogin
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		errors := helper.ErrorValidationResponse(err)
+
+		errorMessage := gin.H{"errors": errors}
+
+		response := helper.APIResponse("Invalid Input", http.StatusUnprocessableEntity, errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	newUser, err := h.userService.Login(input)
+	if err != nil {
+		errorMessage := gin.H{"errors": err}
+		fmt.Println(errorMessage)
+		response := helper.APIResponse("Failed to login", http.StatusBadRequest, errorMessage)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	format := user.FormatUser(newUser)
+	response := helper.APIResponse("Success login", http.StatusOK, format)
 	c.JSON(http.StatusOK, response)
 
 }
