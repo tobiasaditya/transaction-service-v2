@@ -8,6 +8,6 @@ type InputUser struct {
 }
 
 type InputLogin struct {
-	PhoneNumber string `json:"phone_number"`
-	Password    string `json:"password"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }

@@ -50,7 +50,7 @@ func (s service) FindUserByID(id string) (User, error) {
 }
 
 func (s service) Login(input InputLogin) (User, error) {
-	foundUser, err := s.repository.GetUserByPhone(input.PhoneNumber)
+	foundUser, err := s.repository.GetUserByPhone(input.Username)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			// This error means your query did not match any documents.
