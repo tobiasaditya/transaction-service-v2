@@ -12,8 +12,8 @@ type FormatterTransaction struct {
 	TrxType     string             `json:"trxType"`
 	Amount      string             `json:"amount"`
 	Description string             `json:"desc"`
-	TrxMethod   string             `json:"method"`
-	TrxID       string             `json:"trx_id"`
+	TrxMethod   string             `json:"trxMethod"`
+	TrxID       string             `json:"trxId"`
 	RequestTime time.Time          `json:"requestTime"`
 }
 
