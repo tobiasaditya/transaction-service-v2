@@ -5,6 +5,7 @@ import (
 	"time"
 	"transaction-service-v2/helper"
 	"transaction-service-v2/transaction"
+	"transaction-service-v2/user"
 
 	"github.com/gin-gonic/gin"
 )
@@ -45,8 +46,6 @@ func (h transactionHandler) CreateTransaction(c *gin.Context) {
 }
 
 func (h transactionHandler) GetTransactionsUser(c *gin.Context) {
-	userID := "6189f1796bb08e7dc15fe3ef"
-
 	startDate := c.Query("startDate")
 	endDate := c.Query("endDate")
 	var inputStartDate time.Time
@@ -88,7 +87,8 @@ func (h transactionHandler) GetTransactionsUser(c *gin.Context) {
 		inputEndDate = time.Now()
 	}
 
-	transactions, err := h.transactionService.GetTransactions(userID, inputStartDate, inputEndDate)
+	currentUser := c.MustGet("currentUser").(user.User)
+	transactions, err := h.transactionService.GetTransactions(currentUser.ID.Hex(), inputStartDate, inputEndDate)
 	if err != nil {
 		errorMessage := gin.H{"errors": err.Error()}
 

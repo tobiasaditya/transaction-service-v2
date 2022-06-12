@@ -8,11 +8,22 @@ type FormatterUser struct {
 	Email    string             `json:"email"`
 }
 
+type FormatterLogin struct {
+	AccessToken string `json:"access_token"`
+}
+
 func FormatUser(user User) FormatterUser {
 	format := FormatterUser{
 		ID:       user.ID,
 		FullName: user.FullName,
 		Email:    user.Email,
+	}
+	return format
+}
+
+func FormatLogin(token string) FormatterLogin {
+	format := FormatterLogin{
+		AccessToken: token,
 	}
 	return format
 }

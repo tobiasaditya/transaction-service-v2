@@ -3,12 +3,13 @@ package user
 import (
 	"errors"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Service interface {
 	CreateUser(input InputUser) (User, error)
-	FindUserByID(id int) (User, error)
+	FindUserByID(id string) (User, error)
 	Login(input InputLogin) (User, error)
 }
 
@@ -36,8 +37,12 @@ func (s service) CreateUser(input InputUser) (User, error) {
 	return user, nil
 }
 
-func (s service) FindUserByID(id int) (User, error) {
-	foundUser, err := s.repository.GetUserByID(id)
+func (s service) FindUserByID(id string) (User, error) {
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return User{}, err
+	}
+	foundUser, err := s.repository.GetUserByID(objectID)
 	if err != nil {
 		return foundUser, err
 	}

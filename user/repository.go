@@ -4,12 +4,13 @@ import (
 	"context"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Repository interface {
 	Create(user User) (User, error)
-	GetUserByID(id int) (User, error)
+	GetUserByID(id primitive.ObjectID) (User, error)
 	GetUserByPhone(phone string) (User, error)
 }
 
@@ -30,7 +31,7 @@ func (r *repository) Create(user User) (User, error) {
 	return user, nil
 }
 
-func (r *repository) GetUserByID(id int) (User, error) {
+func (r *repository) GetUserByID(id primitive.ObjectID) (User, error) {
 	filter := bson.D{{Key: "_id", Value: id}}
 	foundUser := User{}
 	err := r.db.FindOne(context.TODO(), filter).Decode(&foundUser)
