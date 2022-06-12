@@ -12,7 +12,7 @@ import (
 
 type Repository interface {
 	Create(transaction Transaction) (Transaction, error)
-	GetTransactionsByUserID(userID string) ([]Transaction, error)
+	GetTransactionsByUserID(userID string, start time.Time, end time.Time) ([]Transaction, error)
 }
 
 type repository struct {
@@ -31,12 +31,12 @@ func (r *repository) Create(transaction Transaction) (Transaction, error) {
 	return transaction, nil
 }
 
-func (r *repository) GetTransactionsByUserID(userID string) ([]Transaction, error) {
+func (r *repository) GetTransactionsByUserID(userID string, start time.Time, end time.Time) ([]Transaction, error) {
 	filter := bson.D{
 		{Key: "userId", Value: userID},
 		{Key: "requestTime", Value: bson.D{
-			{Key: "$gte", Value: time.Date(2022, 6, 1, 0, 0, 0, 0, time.Local)},
-			{Key: "$lte", Value: time.Now()},
+			{Key: "$gte", Value: start},
+			{Key: "$lte", Value: end},
 		}},
 	}
 	findOptions := options.Find()

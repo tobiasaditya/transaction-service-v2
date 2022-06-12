@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"time"
 	"transaction-service-v2/helper"
 	"transaction-service-v2/transaction"
 
@@ -31,7 +32,7 @@ func (h transactionHandler) CreateTransaction(c *gin.Context) {
 
 	newTrx, err := h.transactionService.CreateTransaction(input)
 	if err != nil {
-		errorMessage := gin.H{"errors": err}
+		errorMessage := gin.H{"errors": err.Error()}
 
 		response := helper.APIResponse("Failed to add transaction", http.StatusBadRequest, errorMessage)
 		c.JSON(http.StatusBadRequest, response)
@@ -45,9 +46,51 @@ func (h transactionHandler) CreateTransaction(c *gin.Context) {
 
 func (h transactionHandler) GetTransactionsUser(c *gin.Context) {
 	userID := "6189f1796bb08e7dc15fe3ef"
-	transactions, err := h.transactionService.GetTransactions(userID)
+
+	startDate := c.Query("startDate")
+	endDate := c.Query("endDate")
+	var inputStartDate time.Time
+	var inputEndDate time.Time
+
+	if len(startDate) > 0 {
+		resultParse, err := time.Parse("2006-01-02", startDate)
+		if err != nil {
+			errors := helper.ErrorValidationResponse(err)
+
+			errorMessage := gin.H{"errors": errors}
+
+			response := helper.APIResponse("Invalid Input", http.StatusUnprocessableEntity, errorMessage)
+			c.JSON(http.StatusUnprocessableEntity, response)
+			return
+		}
+		inputStartDate = resultParse
+	} else {
+		//If no input, make default date as start of month
+		timeNow := time.Now()
+		inputStartDate = time.Date(timeNow.Year(), timeNow.Month(), 1, 0, 0, 0, 0, timeNow.Location())
+
+	}
+
+	if len(endDate) > 0 {
+		resultParse, err := time.Parse("2006-01-02", endDate)
+		if err != nil {
+			errors := helper.ErrorValidationResponse(err)
+
+			errorMessage := gin.H{"errors": errors}
+
+			response := helper.APIResponse("Invalid Input", http.StatusUnprocessableEntity, errorMessage)
+			c.JSON(http.StatusUnprocessableEntity, response)
+			return
+		}
+		inputEndDate = resultParse
+	} else {
+		//If no input, make default date from today
+		inputEndDate = time.Now()
+	}
+
+	transactions, err := h.transactionService.GetTransactions(userID, inputStartDate, inputEndDate)
 	if err != nil {
-		errorMessage := gin.H{"errors": err}
+		errorMessage := gin.H{"errors": err.Error()}
 
 		response := helper.APIResponse("Failed to get transactions", http.StatusBadRequest, errorMessage)
 		c.JSON(http.StatusBadRequest, response)

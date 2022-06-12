@@ -1,8 +1,10 @@
 package transaction
 
+import "time"
+
 type Service interface {
 	CreateTransaction(input InputTransaction) (Transaction, error)
-	GetTransactions(userID string) ([]Transaction, error)
+	GetTransactions(userID string, start time.Time, end time.Time) ([]Transaction, error)
 }
 
 type service struct {
@@ -30,10 +32,10 @@ func (s service) CreateTransaction(input InputTransaction) (Transaction, error) 
 	return transaction, nil
 }
 
-func (s service) GetTransactions(userID string) ([]Transaction, error) {
+func (s service) GetTransactions(userID string, start time.Time, end time.Time) ([]Transaction, error) {
 	transactions := []Transaction{}
 
-	transactions, err := s.repository.GetTransactionsByUserID(userID)
+	transactions, err := s.repository.GetTransactionsByUserID(userID, start, end)
 	if err != nil {
 		return transactions, err
 	}
