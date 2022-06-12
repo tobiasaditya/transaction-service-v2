@@ -47,7 +47,7 @@ func main() {
 	api.POST("/transaction/add", authMiddleware(authService, userService), transactionHandler.CreateTransaction)
 	api.GET("/transaction", authMiddleware(authService, userService), transactionHandler.GetTransactionsUser)
 
-	router.Run(":8000")
+	router.Run()
 }
 
 func authMiddleware(authService auth.Service, userService user.Service) gin.HandlerFunc {
