@@ -14,7 +14,7 @@ type FormatterTransaction struct {
 	Description string             `json:"desc"`
 	TrxMethod   string             `json:"method"`
 	TrxID       string             `json:"trx_id"`
-	RequestTime time.Time          `json:"created_at"`
+	RequestTime time.Time          `json:"requestTime"`
 }
 
 type FormatterTransactionPage struct {
