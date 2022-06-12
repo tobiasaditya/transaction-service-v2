@@ -1,14 +1,17 @@
 package user
 
-import "time"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type User struct {
-	ID          int
+	ID          primitive.ObjectID `bson:"_id, omitempty"`
 	FullName    string
 	Email       string
 	PhoneNumber string
 	Token       string
 	Password    string
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	CreateTime  time.Time `bson:"createTime,omitempty"`
 }

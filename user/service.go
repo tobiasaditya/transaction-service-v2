@@ -1,6 +1,8 @@
 package user
 
-import "errors"
+import (
+	"errors"
+)
 
 type Service interface {
 	CreateUser(input InputUser) (User, error)
@@ -44,10 +46,6 @@ func (s service) Login(input InputLogin) (User, error) {
 	foundUser, err := s.repository.GetUserByPhone(input.PhoneNumber)
 	if err != nil {
 		return foundUser, err
-	}
-
-	if foundUser.ID == 0 {
-		return User{}, errors.New("User not found")
 	}
 
 	//Jika nemu, cek password

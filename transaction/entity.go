@@ -1,15 +1,18 @@
 package transaction
 
-import "time"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type Transaction struct {
-	ID            int
-	Type          string
-	Amount        int
-	Description   string
-	Method        string
-	UserID        int
-	TransactionID string
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
+	ID          primitive.ObjectID `bson:"_id,omitempty"`
+	TrxType     string
+	Amount      string
+	Desc        string
+	TrxMethod   string
+	UserID      string
+	TrxID       string
+	RequestTime time.Time `bson:"requestTime,omitempty"`
 }

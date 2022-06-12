@@ -44,7 +44,7 @@ func (h transactionHandler) CreateTransaction(c *gin.Context) {
 }
 
 func (h transactionHandler) GetTransactionsUser(c *gin.Context) {
-	userID := 1
+	userID := "6189f1796bb08e7dc15fe3ef"
 	transactions, err := h.transactionService.GetTransactions(userID)
 	if err != nil {
 		errorMessage := gin.H{"errors": err}
