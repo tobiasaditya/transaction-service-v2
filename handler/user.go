@@ -59,10 +59,10 @@ func (h userHandler) LoginUser(c *gin.Context) {
 
 	newUser, err := h.userService.Login(input)
 	if err != nil {
-		errorMessage := gin.H{"errors": err}
+		errorMessage := gin.H{"errors": err.Error()}
 		fmt.Println(errorMessage)
-		response := helper.APIResponse("Failed to login", http.StatusBadRequest, errorMessage)
-		c.JSON(http.StatusBadRequest, response)
+		response := helper.APIResponse("Failed to login", http.StatusUnauthorized, errorMessage)
+		c.JSON(http.StatusUnauthorized, response)
 		return
 	}
 	format := user.FormatUser(newUser)

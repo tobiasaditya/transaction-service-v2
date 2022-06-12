@@ -2,6 +2,8 @@ package user
 
 import (
 	"errors"
+
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type Service interface {
@@ -45,6 +47,10 @@ func (s service) FindUserByID(id int) (User, error) {
 func (s service) Login(input InputLogin) (User, error) {
 	foundUser, err := s.repository.GetUserByPhone(input.PhoneNumber)
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			// This error means your query did not match any documents.
+			return foundUser, errors.New("User not found")
+		}
 		return foundUser, err
 	}
 
