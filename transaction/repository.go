@@ -3,9 +3,11 @@ package transaction
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Repository interface {
@@ -30,10 +32,18 @@ func (r *repository) Create(transaction Transaction) (Transaction, error) {
 }
 
 func (r *repository) GetTransactionsByUserID(userID string) ([]Transaction, error) {
-	filter := bson.D{{Key: "userId", Value: userID}}
-	fmt.Println(filter)
+	filter := bson.D{
+		{Key: "userId", Value: userID},
+		{Key: "requestTime", Value: bson.D{
+			{Key: "$gte", Value: time.Date(2022, 6, 1, 0, 0, 0, 0, time.Local)},
+			{Key: "$lte", Value: time.Now()},
+		}},
+	}
+	findOptions := options.Find()
+	findOptions.SetSort(bson.D{{Key: "_id", Value: -1}})
+	// fmt.Println(filter)
 	transactions := []Transaction{}
-	cursor, err := r.db.Find(context.TODO(), filter)
+	cursor, err := r.db.Find(context.TODO(), filter, findOptions)
 	if err != nil {
 		return transactions, err
 	}
