@@ -50,6 +50,7 @@ func NewDatabase() mongodb {
 }
 
 func (d *mongodb) GetCollection(collectionName string) *mongo.Collection {
-	coll := d.client.Database("personal_transaction").Collection(collectionName)
+	dbName := os.Getenv("DB_NAME")
+	coll := d.client.Database(dbName).Collection(collectionName)
 	return coll
 }
