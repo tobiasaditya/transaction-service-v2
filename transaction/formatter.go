@@ -1,26 +1,30 @@
 package transaction
 
-import "time"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type FormatterTransaction struct {
-	ID            int       `json:"id"`
-	Type          string    `json:"trxType"`
-	Amount        int       `json:"amount"`
-	Description   string    `json:"desc"`
-	Method        string    `json:"method"`
-	TransactionID string    `json:"trx_id"`
-	CreatedAt     time.Time `json:"created_at"`
+	ID          primitive.ObjectID `json:"id"`
+	TrxType     string             `json:"trxType"`
+	Amount      string             `json:"amount"`
+	Description string             `json:"desc"`
+	TrxMethod   string             `json:"method"`
+	TrxID       string             `json:"trx_id"`
+	RequestTime time.Time          `json:"created_at"`
 }
 
 func FormatTransaction(input Transaction) FormatterTransaction {
 	format := FormatterTransaction{
-		ID:            input.ID,
-		Type:          input.Type,
-		Amount:        input.Amount,
-		Description:   input.Description,
-		Method:        input.Method,
-		TransactionID: input.TransactionID,
-		CreatedAt:     input.CreatedAt,
+		ID:          input.ID,
+		TrxType:     input.TrxType,
+		Amount:      input.Amount,
+		Description: input.Desc,
+		TrxMethod:   input.TrxMethod,
+		TrxID:       input.TrxID,
+		RequestTime: input.RequestTime,
 	}
 	return format
 }

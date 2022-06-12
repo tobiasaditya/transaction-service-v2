@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"transaction-service-v2/config"
 	"transaction-service-v2/handler"
+	"transaction-service-v2/transaction"
 	"transaction-service-v2/user"
 
 	"github.com/gin-gonic/gin"
@@ -19,16 +20,16 @@ func main() {
 	newDatabase := config.NewDatabase()
 	// Check the connection
 	userCollection := newDatabase.GetCollection("user_collection")
-	// trxCollection := newDatabase.GetCollection("trx_collection")
+	trxCollection := newDatabase.GetCollection("trx_collection")
 	fmt.Println("Connection to database success")
 
 	userRepo := user.NewRepository(userCollection)
 	userService := user.NewService(userRepo)
 	userHandler := handler.NewUserHandler(userService)
 
-	// transactionRepo := transaction.NewRepository(trxCollection)
-	// transactionService := transaction.NewService(transactionRepo)
-	// transactionHandler := handler.NewTransactionHandler(transactionService)
+	transactionRepo := transaction.NewRepository(trxCollection)
+	transactionService := transaction.NewService(transactionRepo)
+	transactionHandler := handler.NewTransactionHandler(transactionService)
 
 	router := gin.Default()
 
@@ -36,8 +37,8 @@ func main() {
 	api.POST("/user/register", userHandler.RegisterUser)
 	api.POST("/user/login", userHandler.LoginUser)
 
-	// api.POST("/transaction/add", transactionHandler.CreateTransaction)
-	// api.GET("/transaction", transactionHandler.GetTransactionsUser)
+	api.POST("/transaction/add", transactionHandler.CreateTransaction)
+	api.GET("/transaction", transactionHandler.GetTransactionsUser)
 
 	router.Run(":8000")
 }
