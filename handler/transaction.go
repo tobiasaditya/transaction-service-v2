@@ -98,7 +98,8 @@ func (h transactionHandler) GetTransactionsUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	format := transaction.FormatTransactions(transactions)
+	// format := transaction.FormatTransactions(transactions)
+	format := transaction.FormatAccumulatorTransaction(transactions)
 	response := helper.APIResponse("Success get list transactions", http.StatusOK, format)
 	c.JSON(http.StatusOK, response)
 }
