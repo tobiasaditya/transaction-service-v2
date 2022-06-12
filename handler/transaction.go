@@ -103,3 +103,19 @@ func (h transactionHandler) GetTransactionsUser(c *gin.Context) {
 	response := helper.APIResponse("Success get list transactions", http.StatusOK, format)
 	c.JSON(http.StatusOK, response)
 }
+
+func (h transactionHandler) GetInvesmentUser(c *gin.Context) {
+	currentUser := c.MustGet("currentUser").(user.User)
+	transactions, err := h.transactionService.GetInvestments(currentUser.ID.Hex())
+	if err != nil {
+		errorMessage := gin.H{"errors": err.Error()}
+
+		response := helper.APIResponse("Failed to get transactions", http.StatusBadRequest, errorMessage)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	// format := transaction.FormatTransactions(transactions)
+	format := transaction.FormatAccumulatorInvestment(transactions)
+	response := helper.APIResponse("Success get list transactions", http.StatusOK, format)
+	c.JSON(http.StatusOK, response)
+}

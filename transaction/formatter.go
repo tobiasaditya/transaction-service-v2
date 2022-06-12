@@ -25,6 +25,12 @@ type FormatterTransactionPage struct {
 	Content       []FormatterTransaction `json:"content"`
 }
 
+type FormatterInvestmentPage struct {
+	TotalInvestment int                    `json:"total_investment"`
+	NData           int                    `json:"n_data"`
+	Content         []FormatterTransaction `json:"content"`
+}
+
 func FormatTransaction(input Transaction) FormatterTransaction {
 	format := FormatterTransaction{
 		ID:          input.ID,
@@ -66,6 +72,22 @@ func FormatAccumulatorTransaction(input []Transaction) FormatterTransactionPage 
 	format.TotalIncome = totalIncome
 	format.TotalPurchase = totalPurchase
 	format.TotalNet = totalNet
+	format.NData = nData
+	return format
+}
+
+func FormatAccumulatorInvestment(input []Transaction) FormatterInvestmentPage {
+	format := FormatterInvestmentPage{}
+	format.Content = FormatTransactions(input)
+	//Acumulate total data
+	var totalInvestment int
+
+	for _, trx := range input {
+		amount, _ := strconv.Atoi(trx.Amount)
+		totalInvestment += amount
+	}
+	nData := len(input)
+	format.TotalInvestment = totalInvestment
 	format.NData = nData
 	return format
 }

@@ -13,6 +13,7 @@ import (
 type Repository interface {
 	Create(transaction Transaction) (Transaction, error)
 	GetTransactionsByUserID(userID string, start time.Time, end time.Time) ([]Transaction, error)
+	GetInvestmentsByUserID(userID string) ([]Transaction, error)
 }
 
 type repository struct {
@@ -38,6 +39,27 @@ func (r *repository) GetTransactionsByUserID(userID string, start time.Time, end
 			{Key: "$gte", Value: start},
 			{Key: "$lte", Value: end},
 		}},
+	}
+	findOptions := options.Find()
+	findOptions.SetSort(bson.D{{Key: "_id", Value: -1}})
+	// fmt.Println(filter)
+	transactions := []Transaction{}
+	cursor, err := r.db.Find(context.TODO(), filter, findOptions)
+	if err != nil {
+		return transactions, err
+	}
+	err = cursor.All(context.TODO(), &transactions)
+	if err != nil {
+		fmt.Println(err)
+		return transactions, err
+	}
+	return transactions, nil
+}
+
+func (r *repository) GetInvestmentsByUserID(userID string) ([]Transaction, error) {
+	filter := bson.D{
+		{Key: "userId", Value: userID},
+		{Key: "trxType", Value: "INVESTMENT"},
 	}
 	findOptions := options.Find()
 	findOptions.SetSort(bson.D{{Key: "_id", Value: -1}})

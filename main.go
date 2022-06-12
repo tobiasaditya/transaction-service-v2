@@ -46,6 +46,7 @@ func main() {
 
 	api.POST("/transaction/add", authMiddleware(authService, userService), transactionHandler.CreateTransaction)
 	api.GET("/transaction", authMiddleware(authService, userService), transactionHandler.GetTransactionsUser)
+	api.GET("/transaction/investment", authMiddleware(authService, userService), transactionHandler.GetInvesmentUser)
 
 	router.Run()
 }
