@@ -2,6 +2,7 @@ package transaction
 
 import (
 	"strconv"
+	"transaction-service-v2/util"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -38,7 +39,7 @@ func FormatTransaction(input Transaction) FormatterTransaction {
 		Description: input.Desc,
 		TrxMethod:   input.TrxMethod,
 		TrxID:       input.TrxID,
-		RequestTime: input.RequestTime.Format("2006-01-02 15:04:05"),
+		RequestTime: util.FormatTime(input.RequestTime),
 	}
 	return format
 }
