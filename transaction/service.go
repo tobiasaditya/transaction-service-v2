@@ -2,6 +2,7 @@ package transaction
 
 import (
 	"time"
+	"transaction-service-v2/util"
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -30,7 +31,7 @@ func (s service) CreateTransaction(input InputTransaction, userID string) (Trans
 		TrxMethod:   input.Method,
 		UserID:      userID,
 		TrxID:       uuid.New().String(),
-		RequestTime: time.Now(),
+		RequestTime: util.CTimeNow(),
 	}
 
 	transaction, err := s.repository.Create(transaction)

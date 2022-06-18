@@ -6,6 +6,7 @@ import (
 	"transaction-service-v2/helper"
 	"transaction-service-v2/transaction"
 	"transaction-service-v2/user"
+	"transaction-service-v2/util"
 
 	"github.com/gin-gonic/gin"
 )
@@ -67,7 +68,7 @@ func (h transactionHandler) GetTransactionsUser(c *gin.Context) {
 		inputStartDate = resultParse
 	} else {
 		//If no input, make default date as start of month
-		timeNow := time.Now()
+		timeNow := util.CTimeNow()
 		inputStartDate = time.Date(timeNow.Year(), timeNow.Month(), 1, 0, 0, 0, 0, timeNow.Location())
 
 	}
@@ -86,7 +87,7 @@ func (h transactionHandler) GetTransactionsUser(c *gin.Context) {
 		inputEndDate = resultParse
 	} else {
 		//If no input, make default date from today
-		inputEndDate = time.Now()
+		inputEndDate = util.CTimeNow()
 	}
 
 	currentUser := c.MustGet("currentUser").(user.User)
