@@ -2,7 +2,6 @@ package transaction
 
 import (
 	"strconv"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -14,7 +13,7 @@ type FormatterTransaction struct {
 	Description string             `json:"desc"`
 	TrxMethod   string             `json:"trxMethod"`
 	TrxID       string             `json:"trxId"`
-	RequestTime time.Time          `json:"requestTime"`
+	RequestTime string             `json:"requestTime"`
 }
 
 type FormatterTransactionPage struct {
@@ -39,7 +38,7 @@ func FormatTransaction(input Transaction) FormatterTransaction {
 		Description: input.Desc,
 		TrxMethod:   input.TrxMethod,
 		TrxID:       input.TrxID,
-		RequestTime: input.RequestTime,
+		RequestTime: input.RequestTime.Format("2006-01-02 15:04:05"),
 	}
 	return format
 }
