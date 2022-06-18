@@ -3,6 +3,8 @@ package helper
 import (
 	"time"
 
+	"transaction-service-v2/util"
+
 	"github.com/go-playground/validator/v10"
 )
 
@@ -15,7 +17,7 @@ type Response struct {
 
 func APIResponse(message string, code int, content interface{}) Response {
 	jsonResponse := Response{}
-	jsonResponse.RequestTime = time.Now()
+	jsonResponse.RequestTime = util.CTimeNow()
 	jsonResponse.Message = message
 	jsonResponse.StatusCode = code
 	jsonResponse.Content = content
