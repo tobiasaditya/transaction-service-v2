@@ -33,11 +33,15 @@ func (r *repository) Create(transaction Transaction) (Transaction, error) {
 }
 
 func (r *repository) GetTransactionsByUserID(userID string, start time.Time, end time.Time) ([]Transaction, error) {
+	trxType := []string{"PURCHASE", "INCOME"}
 	filter := bson.D{
 		{Key: "userId", Value: userID},
 		{Key: "requestTime", Value: bson.D{
 			{Key: "$gte", Value: start},
 			{Key: "$lte", Value: end},
+		}},
+		{Key: "trxType", Value: bson.D{
+			{Key: "$in", Value: trxType},
 		}},
 	}
 	findOptions := options.Find()
