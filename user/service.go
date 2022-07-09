@@ -6,6 +6,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Service interface {
@@ -38,6 +39,13 @@ func (s service) CreateUser(input InputUser) (User, error) {
 		return dupUser, errors.New("Username has been used")
 	}
 
+	//Hashed password
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.MinCost)
+
+	if err != nil {
+		return user, err
+	}
+	user.Password = string(passwordHash)
 	user, err = s.repository.Create(user)
 
 	if err != nil {
@@ -63,14 +71,15 @@ func (s service) Login(input InputLogin) (User, error) {
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			// This error means your query did not match any documents.
-			return foundUser, errors.New("User not found")
+			return foundUser, errors.New("Incorrect username/password")
 		}
 		return foundUser, err
 	}
 
 	//Jika nemu, cek password
-	if foundUser.Password != input.Password {
-		return foundUser, errors.New("Incorrect password")
+	err = bcrypt.CompareHashAndPassword([]byte(foundUser.Password), []byte(input.Password))
+	if err != nil {
+		return foundUser, errors.New("Incorrect username/password")
 	}
 
 	return foundUser, nil
