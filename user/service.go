@@ -2,6 +2,7 @@ package user
 
 import (
 	"errors"
+	"transaction-service-v2/util"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -23,13 +24,21 @@ func NewService(repository Repository) *service {
 
 func (s service) CreateUser(input InputUser) (User, error) {
 	user := User{
+		ID:          primitive.NewObjectID(),
 		FullName:    input.FullName,
 		Email:       input.Email,
 		PhoneNumber: input.PhoneNumber,
 		Password:    input.Password,
+		CreateTime:  util.CTimeNow(),
 	}
 
-	user, err := s.repository.Create(user)
+	//Check for duplicate phonenumber(username)
+	dupUser, err := s.repository.GetUserByPhone(user.PhoneNumber)
+	if dupUser.PhoneNumber == user.PhoneNumber {
+		return dupUser, errors.New("Username has been used")
+	}
+
+	user, err = s.repository.Create(user)
 
 	if err != nil {
 		return user, err
