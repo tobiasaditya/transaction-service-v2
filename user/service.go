@@ -2,10 +2,14 @@ package user
 
 import (
 	"errors"
+	"fmt"
+	"os"
+	"transaction-service-v2/security"
 	"transaction-service-v2/util"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Service interface {
@@ -38,9 +42,27 @@ func (s service) CreateUser(input InputUser) (User, error) {
 		return dupUser, errors.New("Username has been used")
 	}
 
+	//Decrypt input password
+	output, err := security.DecryptString(user.Password, os.Getenv("AES_PASSWORD"))
+	if err != nil {
+		fmt.Println(err.Error())
+		return user, errors.New("Invalid credential")
+	}
+
+	input.Password = output
+
+	//Hashed password
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.MinCost)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return user, err
+	}
+	user.Password = string(passwordHash)
 	user, err = s.repository.Create(user)
 
 	if err != nil {
+		fmt.Println(err.Error())
 		return user, err
 	}
 	return user, nil
@@ -63,14 +85,22 @@ func (s service) Login(input InputLogin) (User, error) {
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			// This error means your query did not match any documents.
-			return foundUser, errors.New("User not found")
+			return foundUser, errors.New("Incorrect username/password")
 		}
 		return foundUser, err
 	}
+	//Decrypt input password
+	output, err := security.DecryptString(input.Password, os.Getenv("AES_PASSWORD"))
+	if err != nil {
+		fmt.Println(err.Error())
+		return foundUser, errors.New("Invalid credential")
+	}
+	input.Password = output
 
 	//Jika nemu, cek password
-	if foundUser.Password != input.Password {
-		return foundUser, errors.New("Incorrect password")
+	err = bcrypt.CompareHashAndPassword([]byte(foundUser.Password), []byte(input.Password))
+	if err != nil {
+		return foundUser, errors.New("Incorrect username/password")
 	}
 
 	return foundUser, nil
