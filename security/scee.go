@@ -13,7 +13,7 @@ import (
 const AlgorithmNonceSize int = 12
 const AlgorithmKeySize int = 16
 const PBKDF2SaltSize int = 16
-const PBKDF2Iterations int = 32767
+const PBKDF2Iterations int = 10
 
 func EncryptString(plaintext, password string) (string, error) {
 	// Generate a 128-bit salt using a CSPRNG.
