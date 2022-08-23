@@ -16,6 +16,7 @@ type Service interface {
 	CreateUser(input InputUser) (User, error)
 	FindUserByID(id string) (User, error)
 	Login(input InputLogin) (User, error)
+	FindUserByPhone(phone string) (User, error)
 }
 
 type service struct {
@@ -103,5 +104,14 @@ func (s service) Login(input InputLogin) (User, error) {
 		return foundUser, errors.New("Incorrect username/password")
 	}
 
+	return foundUser, nil
+}
+
+func (s *service) FindUserByPhone(phone string) (User, error) {
+	//Check for duplicate phonenumber(username)
+	foundUser, err := s.repository.GetUserByPhone(phone)
+	if err != nil {
+		return foundUser, err
+	}
 	return foundUser, nil
 }

@@ -8,6 +8,7 @@ import (
 	"transaction-service-v2/config"
 	"transaction-service-v2/handler"
 	"transaction-service-v2/helper"
+	"transaction-service-v2/otp"
 	"transaction-service-v2/transaction"
 	"transaction-service-v2/user"
 
@@ -26,13 +27,17 @@ func main() {
 	// Check the connection
 	userCollection := newDatabase.GetCollection("user_collection")
 	trxCollection := newDatabase.GetCollection("trx_collection")
+	otpCollection := newDatabase.GetCollection("otp_collection")
 	fmt.Println("Connection to database success")
 
 	authService := auth.NewJwtService()
 
+	otpRepo := otp.NewRepository(otpCollection)
+	otpService := otp.NewService(otpRepo)
+
 	userRepo := user.NewRepository(userCollection)
 	userService := user.NewService(userRepo)
-	userHandler := handler.NewUserHandler(userService, authService)
+	userHandler := handler.NewUserHandler(userService, authService, otpService)
 
 	transactionRepo := transaction.NewRepository(trxCollection)
 	transactionService := transaction.NewService(transactionRepo)
@@ -42,6 +47,7 @@ func main() {
 
 	api := router.Group("/api/v2")
 	api.POST("/user/register", userHandler.RegisterUser)
+	api.POST("/user/verify/:otpId", userHandler.VerifyUser)
 	api.POST("/user/login", userHandler.LoginUser)
 
 	api.POST("/transaction/add", authMiddleware(authService, userService), transactionHandler.CreateTransaction)
