@@ -4,15 +4,15 @@ import (
 	"fmt"
 	"net/smtp"
 	"os"
+	"transaction-service-v2/otp"
 )
 
-func SendEmail(email string) {
+func SendEmailOtp(otp otp.Otp) error {
 
 	from := os.Getenv("G_EMAIL")
 	password := os.Getenv("G_PASSWORD")
-	fmt.Println(from)
-	fmt.Println(password)
-	toEmailAddress := email
+
+	toEmailAddress := otp.Receiver
 	to := []string{toEmailAddress}
 
 	host := "smtp.gmail.com" //os.Getenv("G_HOST")
@@ -20,14 +20,15 @@ func SendEmail(email string) {
 	address := host + ":" + port
 
 	subject := "Subject: Registration Obider Personal App\n"
-	body := "This is the body of the mail"
+	body := fmt.Sprintf("This is you One Time Password (OTP) %s", otp.Value)
 	message := []byte(subject + body)
 
 	auth := smtp.PlainAuth("", from, password, host)
 
 	err := smtp.SendMail(address, auth, from, to, message)
 	if err != nil {
-		panic(err)
+		return err
 	}
+	return nil
 
 }
