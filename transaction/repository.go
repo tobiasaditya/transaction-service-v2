@@ -45,7 +45,7 @@ func (r *repository) GetTransactionsByUserID(userID string, start time.Time, end
 		}},
 	}
 	findOptions := options.Find()
-	findOptions.SetSort(bson.D{{Key: "_id", Value: -1}})
+	findOptions.SetSort(bson.D{{Key: "requestTime", Value: -1}})
 	// fmt.Println(filter)
 	transactions := []Transaction{}
 	cursor, err := r.db.Find(context.TODO(), filter, findOptions)
