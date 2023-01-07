@@ -9,6 +9,7 @@ import (
 	"transaction-service-v2/handler"
 	"transaction-service-v2/helper"
 	"transaction-service-v2/otp"
+	"transaction-service-v2/reporting"
 	"transaction-service-v2/transaction"
 	"transaction-service-v2/user"
 
@@ -28,6 +29,7 @@ func main() {
 	userCollection := newDatabase.GetCollection("user_collection")
 	trxCollection := newDatabase.GetCollection("trx_collection")
 	otpCollection := newDatabase.GetCollection("otp_collection")
+	reportingCollection := newDatabase.GetCollection("record_collection")
 	fmt.Println("Connection to database success")
 
 	authService := auth.NewJwtService()
@@ -43,6 +45,10 @@ func main() {
 	transactionService := transaction.NewService(transactionRepo)
 	transactionHandler := handler.NewTransactionHandler(transactionService)
 
+	reportingRepo := reporting.NewRepository(reportingCollection)
+	reportingService := reporting.NewService(reportingRepo)
+	reportingHandler := handler.NewReportingHandler(reportingService)
+
 	router := gin.Default()
 
 	api := router.Group("/api/v2")
@@ -53,6 +59,9 @@ func main() {
 	api.POST("/transaction/add", authMiddleware(authService, userService), transactionHandler.CreateTransaction)
 	api.GET("/transaction", authMiddleware(authService, userService), transactionHandler.GetTransactionsUser)
 	api.GET("/transaction/investment", authMiddleware(authService, userService), transactionHandler.GetInvesmentUser)
+
+	api.POST("/reporting/add", authMiddleware(authService, userService), reportingHandler.CreateRecordDaily)
+	api.GET("/reporting", authMiddleware(authService, userService), reportingHandler.GetReportingsUser)
 
 	router.Run()
 }
