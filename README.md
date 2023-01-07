@@ -2,6 +2,8 @@
 
 Back-end for saving personal transaction, including purchase and income. This is just a different version of other repos built using FastAPI (Python) framework. 
 
+Start adding feature to record daily data
+
 
 ## Tech ##
 - Gin Framework (Go)
